@@ -34,7 +34,7 @@ class ImageLoader():
 
 def image_features(
         img_paths, model_name='resnet50', use_gpu=torch.cuda.is_available(),
-        batch_size=32, num_workers=4, progress=False, augment=False, pretrained_set='imagenet):
+        batch_size=32, num_workers=4, progress=False, augment=False, pretrained_set='imagenet'):
     """
     Extract deep learning image features from images.
 
