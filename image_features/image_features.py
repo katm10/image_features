@@ -4,8 +4,8 @@ import pretrainedmodels
 import pretrainedmodels.utils as utils
 
 
-def get_model(model_name):
-    model = getattr(pretrainedmodels, model_name)(pretrained='imagenet')
+def get_model(model_name, pretrained_set):
+    model = getattr(pretrainedmodels, model_name)(pretrained=pretrained_set)
     model.eval()
     return model
 
@@ -34,7 +34,7 @@ class ImageLoader():
 
 def image_features(
         img_paths, model_name='resnet50', use_gpu=torch.cuda.is_available(),
-        batch_size=32, num_workers=4, progress=False, augment=False):
+        batch_size=32, num_workers=4, progress=False, augment=False, pretrained_set='imagenet):
     """
     Extract deep learning image features from images.
 
@@ -51,6 +51,7 @@ def image_features(
         augment(bool): If true, images are augmented before passing through
             the model. Useful if you're training a classifier based on these
             features.
+	pretrained_set(string, optional): defaults to 'imagenet' but should be 'imagenet+background' for certain models
     """
     if use_gpu:
         device = torch.device('cuda')
@@ -60,7 +61,7 @@ def image_features(
     if isinstance(img_paths, str):
         raise ValueError(f'img_paths should be a list of image paths.')
 
-    model = get_model(model_name).to(device)
+    model = get_model(model_name, pretrained_set).to(device)
     dataset = ImageLoader(img_paths, model, augment=augment)
     dataloader = torch.utils.data.DataLoader(
         dataset, shuffle=False, batch_size=batch_size, num_workers=num_workers)
