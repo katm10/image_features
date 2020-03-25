@@ -33,7 +33,7 @@ class ImageLoader():
 
 
 def image_features(
-        img_paths, model_name='resnet50', use_gpu=torch.cuda.is_available(),
+        img_paths, dataset=None, model_name='resnet50', use_gpu=torch.cuda.is_available(),
         batch_size=32, num_workers=4, progress=False, augment=False, pretrained_set='imagenet'):
     """
     Extract deep learning image features from images.
@@ -60,13 +60,17 @@ def image_features(
 
     if isinstance(img_paths, str):
         raise ValueError(f'img_paths should be a list of image paths.')
+	
+    	
 
     model = get_model(model_name, pretrained_set).to(device)
-    dataset = ImageLoader(img_paths, model, augment=augment)
+    if dataset is None:	
+        dataset = ImageLoader(img_paths, model, augment=augment)
     dataloader = torch.utils.data.DataLoader(
         dataset, shuffle=False, batch_size=batch_size, num_workers=num_workers)
     with torch.no_grad():
-        if progress:
+		
+        if progress and img_paths is not None:
             pbar = tqdm(total=len(img_paths), desc='Computing image features')
 
         output_features = []
